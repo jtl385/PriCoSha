@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/home.css?=126379">
+</head>
+<body>
+    <h2>Add Friend to Group</h2>
+    <p>
+        Select a group you own, then enter the person's name.<br>
+        If multiple people have the same name, you must also enter the person's email. <br>
+    </p>
+
+    Select Group: <select id="friend-group">
+    {% for fg in friend_groups %}
+        <option value="{{ fg.fg_name }}">{{ fg.fg_name }}</option>
+    {% endfor %}
+    </select>
+    <br>
+    First Name: <input type="text" class="form-control" id="friend-fname">
+    Last Name: <input type="text" class="form-control" id="friend-lname">
+    (Optional) Email: <input type="text" class="form-control" id="friend-email">
+    <br>
+    <button class="btn btn-primary btn-large" id="add-friend-btn">Add friend</button>
+    <button class="btn btn-primary btn-large" id="cancel-btn">Back</button>
+    <br>
+    <p id="error"></p>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        $("#add-friend-btn").click((e) => {
+            data = {
+                fname: $("#friend-fname").val(),
+                lname: $("#friend-lname").val(),
+                email: $("#friend-email").val(),
+                fg_name: $("#friend-group").val()
+            }
+            $.ajax({
+                url: "http://localhost:"+location.port+"/add_friend/",
+                method: "POST",
+                data: JSON.stringify(data),
+                success: (response) => {
+                    console.log("Add friend post success")
+                    if (response.redirect == "success") {
+                        alert("Success!")
+                    } else if (response.redirect == "none"){
+                        $("#error").html("There is no one with that name. Please try again.")
+                    } else if (response.redirect == "duplicate") {
+                        $("#error").html("There is more than 1 person with that name. Please enter the person's email.")
+                    } else if (response.redirect == "exists"){
+                        $("#error").html("This person is already in that group.")
+                    }
+                }
+            });
+        });
+        $("#cancel-btn").click((e) => {
+            location.href = "http://localhost:"+location.port+"/home/"
+        });
+    </script>
+</body>
+</html>

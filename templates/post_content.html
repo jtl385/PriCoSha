@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/home.css?=126379">
+</head>
+<body>
+
+    <h2>POST CONTENT ITEM</h2>
+    <p>Choose whether the item is public or private, fill in the fields, and press Post.</p>
+    <form>
+        Public: <input type="checkbox" id="content-pub"><br>
+        Name<input type="text" class="form-control" id="content-name">
+        File path<input type="text" class="form-control" id="content-file">
+        <b>SHARE TO: </b>
+        <div id="fg-div">
+        {% for fg in friend_groups %}
+            {{ fg.fg_name }} (owned by {{ fg.owner_email }}) <input type="checkbox" class="fg-pair" value="{{ fg.fg_name }},{{ fg.owner_email }}"><br>
+        {% endfor %}
+        </div>
+    </form>
+    <br>
+    <button class="btn btn-primary btn-large" id="content-post-btn">Post</button>
+    <button class="btn btn-primary btn-large" id="cancel-btn">Cancel</button>
+
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        $("#content-post-btn").click((e) => {
+            checked_fg_pairs = [];
+            $("#fg-div").children(".fg-pair").each(function() {
+                if ($(this).is(":checked")) {
+                    checked_fg_pairs.push($(this).val())
+                }
+            });
+            console.log(checked_fg_pairs)
+            data = {
+                file_path: $("#content-file").val(),
+                item_name: $("#content-name").val(),
+                is_pub: $("#content-pub").is(":checked"),
+                fg_pairs: checked_fg_pairs
+            };
+            console.log(data)
+            $.ajax({
+                url: "http://localhost:"+location.port+"/post_content/",
+                method: "POST",
+                data: JSON.stringify(data),
+                success: (response) => {
+                    console.log("content post success");
+                    if (response.redirect === "home") {
+                        location.href = "http://localhost:"+location.port+"/home/"
+                    }
+                }
+            });
+
+        });
+        $("#cancel-btn").click((e) => {
+            location.href = "http://localhost:"+location.port+"/home/"
+        });
+
+    </script>
+</body>
+</html>
