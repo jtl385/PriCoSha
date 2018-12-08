@@ -1,0 +1,14 @@
+body {
+    padding: 20px;
+    min-width: 300px;
+    max-width: 600px;
+    margin: auto;
+}
+
+#content-pub {
+    width: 20px;
+}
+
+#error {
+    color: darkred;
+}

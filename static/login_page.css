@@ -1,0 +1,19 @@
+body {
+    padding: 50px 0px;
+    min-width: 200px;
+    max-width: 300px;
+    margin: auto;
+}
+
+p {
+    margin: 0px;
+}
+
+form {
+    min-width: 180px;
+}
+
+#login-login {
+    margin: auto;
+    text-align: center;
+}
